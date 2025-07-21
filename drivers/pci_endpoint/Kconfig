@@ -30,5 +30,10 @@ config PCI_SANDBOX_EP
 	  endpoint mode.
 	  The sandbox driver act as a dummy driver which stores and
 	  retrieves PCIe endpoint configuration as is.
-
+config PCI_QDMA_EP
+  bool "QDMA EP endpoint controller"
+  depends on PCI_ENDPOINT
+  help
+    Say Y here if you want to support the EP-controller for the custom PCIe endpoint logic
+    on the versal pl.
 endmenu

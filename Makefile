@@ -868,6 +868,7 @@ libs-y += env/
 libs-y += lib/
 libs-y += fs/
 libs-$(filter y,$(CONFIG_NET) $(CONFIG_NET_LWIP)) += net/
+libs-$(CONFIG_PCI_QDMA_EP) += pci/
 libs-y += disk/
 libs-y += drivers/
 libs-$(CONFIG_SYS_FSL_DDR) += drivers/ddr/fsl/
