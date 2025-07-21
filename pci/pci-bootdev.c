@@ -4,8 +4,6 @@
 #include <dm.h>
 #include <log.h>
 #include <bootmeth.h>
-#include "pci-bootdev.h"
-#include <stdlib.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -18,10 +16,6 @@ static int pci_get_booflow(struct udevice* dev, struct bootflow_iter* iter, stru
     if(ret)
         return log_msg_ret("check", ret);
     bflow->name = strdup("pci-mc");
-    bflow->bootmeth_priv = malloc(sizeof(struct pci_mc_bootdev));
-    struct pci_mc_bootdev* pmd = (struct pci_mc_bootdev*) bflow->bootmeth_priv;
-    pmd->pci_memory_space = DATA_ADDR_RANGE_START;
-    pmd->pci_cmd_register = DATA_CMD_RANGE_START;
     ret = bootmeth_read_bootflow(bflow->method, bflow);
     if(ret)
         return log_msg_ret("read", ret);

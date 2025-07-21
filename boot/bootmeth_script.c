@@ -6,12 +6,6 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#include "dm/device.h"
-#include "dm/uclass-id.h"
-#include "linux/kconfig.h"
-#include "log.h"
-#include "pci-boot.h"
-#include <string.h>
 #define LOG_CATEGORY UCLASS_BOOTSTD
 
 #include <blk.h>
@@ -154,14 +148,6 @@ static int script_read_bootflow_net(struct bootflow *bflow)
 	return 0;
 }
 
-static int script_read_bootflow_pci(struct udevice* bootstd, struct bootflow* bflow){
-    int ret;
-    ret = wait_for_image(bflow);
-    if(ret)
-        return log_msg_ret("waiting for pci image", ret);
-    return script_read_bootflow_file(bootstd, bflow);
-}
-
 static int script_read_bootflow(struct udevice *dev, struct bootflow *bflow)
 {
 	const struct udevice *media = dev_get_parent(bflow->dev);
@@ -178,11 +164,7 @@ static int script_read_bootflow(struct udevice *dev, struct bootflow *bflow)
 		ret = script_read_bootflow_net(bflow);
 		if (ret)
 			return log_msg_ret("net", ret);
-  }else if(IS_ENABLED(CONFID_PCI) && device_get_uclass_id(media) == UCLASS_PCI_EP){
-      ret = script_read_bootflow_pci(bootstd, bflow);
-      if(ret)
-          return log_msg_ret("pci", ret); 
-	} else {
+  } else {
 		ret = script_read_bootflow_file(bootstd, bflow);
 		if (ret)
 			return log_msg_ret("blk", ret);
