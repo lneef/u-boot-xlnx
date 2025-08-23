@@ -4,7 +4,6 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#define LOG_CATEGORY UCLASS_BOOTSTD
 
 #include <dm.h>
 #include <bootdev.h>
@@ -413,7 +412,9 @@ static int label_to_uclass(const char *label, int *seqp, int *method_flagsp)
 		    !strncmp("dhcp", label, len)) {
 			id = UCLASS_ETH;
 			method_flags |= BOOTFLOW_METHF_DHCP_ONLY;
-		} else {
+		} else if (!strncmp("pciep", label, len)){
+        id = UCLASS_PCI_EP;
+    }else {
 			return -EPFNOSUPPORT;
 		}
 	}
@@ -627,7 +628,7 @@ int bootdev_next_label(struct bootflow_iter *iter, struct udevice **devp,
 	}
 
 	if (!dev)
-		return log_msg_ret("fin", -ENODEV);
+		return log_msg_ret("", -ENODEV);
 	*devp = dev;
 
 	return 0;

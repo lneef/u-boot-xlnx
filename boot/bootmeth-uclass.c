@@ -112,6 +112,10 @@ int bootmeth_setup_iter_order(struct bootflow_iter *iter, bool include_global)
 	int ret;
 
 	ret = bootstd_get_priv(&std);
+  if(std->cur_bootdev)
+    log_debug("%s\n", std->cur_bootdev->name);
+  else
+    log_debug("No current bootdev\n");
 	if (ret)
 		return ret;
 
