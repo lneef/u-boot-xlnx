@@ -245,6 +245,13 @@ struct pci_ep_ops {
 	 * @return 0 if OK, -ve on error
 	 */
 	int	(*stop)(struct udevice *dev);
+
+  /**
+   * allows the PCI EP device to load an image from the RC
+   * @dev: device to load from
+   * @return 0 if OK, -ve on error
+   */
+  int (*load_from_host)(struct udevice *dev);
 };
 
 #define pci_ep_get_ops(dev)	((struct pci_ep_ops *)(dev)->driver->ops)
@@ -410,5 +417,16 @@ int pci_ep_start(struct udevice *dev);
  * Return: 0 if OK, -ve on error
  */
 int pci_ep_stop(struct udevice *dev);
+
+
+/**
+ * pci_ep_load_from_host() - load an image from the host
+ *
+ * Allows the PCI EP device to load an image from the host.
+ *
+ * @dev: device to load from
+ * Return: 0 if OK, -ve on error
+ * */
+int pci_ep_load_from_host(struct udevice *dev);
 
 #endif

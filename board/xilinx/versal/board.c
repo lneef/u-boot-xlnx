@@ -176,7 +176,7 @@ static int boot_targets_setup(void)
 		break;
 	case JTAG_MODE:
 		puts("JTAG_MODE\n");
-		mode = "jtag pxe dhcp";
+		mode = "jtag pxe dhcp pciep";
 		break;
 	case QSPI_MODE_24BIT:
 		puts("QSPI_MODE_24\n");

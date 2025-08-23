@@ -9,7 +9,9 @@
  * Written by Ramon Fried <ramon.fried@gmail.com>
  */
 
-#define LOG_CATEGORY UCLASS_PCI_EP
+#include "bootdev.h"
+#include "dm/device-internal.h"
+#include "dm/device.h"
 
 #include <dm.h>
 #include <errno.h>
@@ -206,9 +208,28 @@ int pci_ep_stop(struct udevice *dev)
 	return ops->stop(dev);
 }
 
+int pci_ep_load_from_host(struct udevice* dev){
+    struct pci_ep_ops *ops = pci_ep_get_ops(dev);
+    if (!ops->load_from_host)
+        return log_msg_ret("load_from_host", -ENOSYS);
+    return ops->load_from_host(dev);
+}
+
+static int pci_ep_post_bind(struct udevice* dev){
+    int ret;
+    struct pci_ep_ops *ops = pci_ep_get_ops(dev);
+    if(!ops->load_from_host)
+        return log_msg_ret("load_from_host", -ENOSYS);
+    ret = bootdev_setup_for_dev(dev, "pci_bootdev");
+    if (ret)
+        return log_msg_ret("bootdev", ret);
+    return 0;
+}
+
 UCLASS_DRIVER(pci_ep) = {
 	.id		= UCLASS_PCI_EP,
 	.name		= "pci_ep",
+  .post_bind = pci_ep_post_bind,
 	.flags		= DM_UC_FLAG_SEQ_ALIAS,
 };
 
