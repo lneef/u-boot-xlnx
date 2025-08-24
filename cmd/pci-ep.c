@@ -9,6 +9,9 @@
 
 static int load_image(struct udevice* dev){
     int ret;
+    ret = pci_ep_prepare_boot(dev);
+    if(ret)
+        return ret;
     do{
         ret = pci_ep_load_from_host(dev);
     }while(!ctrlc() && ret == -EAGAIN);

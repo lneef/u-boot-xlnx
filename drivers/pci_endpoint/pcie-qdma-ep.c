@@ -8,7 +8,11 @@
 #include <linux/io.h>
 #include <pci_ep.h>
 
-#define PCI_EP_CTRL_LINK_UP 0x8
+#define PCI_EP_CTRL_LINK_UP 0x4
+#define PCI_EP_CTRL_STATUS 0x10
+
+#define PCI_EP_CTRL_STATUS_BOOT_DONE 0b11
+#define PCI_EP_CTRL_STATUS_BOOTING 0b01
 
 struct pci_ep_ctrl_data {
   void __iomem *cmd_addr;
@@ -41,14 +45,22 @@ static int qdma_pci_ep_remove(struct udevice *dev) {
   return 0;
 }
 
-static int qdma_pci_ep_load_from_host(struct udevice *dev) {
+static int qdma_pci_ep_prepare_boot(struct udevice *dev) {
   struct pci_ep_ctrl_data *pbd = (struct pci_ep_ctrl_data *)dev_get_priv(dev);
-  u32 irq_val = readl(pbd->cmd_addr);
+  writel(PCI_EP_CTRL_STATUS_BOOTING, pbd->cmd_addr + PCI_EP_CTRL_STATUS);
+  return 0;
+}
+
+static int qdma_pci_ep_load_from_host(struct udevice *dev) {
+  u32 irq_val;  
+  struct pci_ep_ctrl_data *pbd = (struct pci_ep_ctrl_data *)dev_get_priv(dev);
+  irq_val = readl(pbd->cmd_addr);
   if (irq_val == 0)
     return -EAGAIN;
   if (irq_val == -1)
     return -ENOENT;
-  writel(0ul, pbd->cmd_addr);
+  writel(0, pbd->cmd_addr);
+  writel(PCI_EP_CTRL_STATUS_BOOT_DONE, pbd->cmd_addr + PCI_EP_CTRL_STATUS);
   return 0;
 }
 
@@ -58,6 +70,7 @@ const struct udevice_id qdma_pci_ep_of_match[] = {
 };
 
 static struct pci_ep_ops pq_ops = {
+    .prepare_boot = qdma_pci_ep_prepare_boot,
     .load_from_host = qdma_pci_ep_load_from_host,
 };
 

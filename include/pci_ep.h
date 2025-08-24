@@ -247,6 +247,14 @@ struct pci_ep_ops {
 	int	(*stop)(struct udevice *dev);
 
   /**
+   * prepare_boot - prepare the EP to load an image from the host
+   *
+   * @dev: device to prepare
+   * @return 0 if OK, -ve on error
+   */
+  int (*prepare_boot)(struct udevice* dev);
+
+  /**
    * allows the PCI EP device to load an image from the RC
    * @dev: device to load from
    * @return 0 if OK, -ve on error
@@ -418,6 +426,13 @@ int pci_ep_start(struct udevice *dev);
  */
 int pci_ep_stop(struct udevice *dev);
 
+/**
+ * pci_ep_prepare_boot() - prepare the EP to load an image from the host
+ *
+ * @dev: device to prepare
+ * Return: 0 if OK, -ve on error
+ */
+int pci_ep_prepare_boot(struct udevice* dev);
 
 /**
  * pci_ep_load_from_host() - load an image from the host
@@ -426,7 +441,7 @@ int pci_ep_stop(struct udevice *dev);
  *
  * @dev: device to load from
  * Return: 0 if OK, -ve on error
- * */
+ */
 int pci_ep_load_from_host(struct udevice *dev);
 
 #endif

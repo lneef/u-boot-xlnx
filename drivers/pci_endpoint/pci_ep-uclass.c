@@ -208,6 +208,13 @@ int pci_ep_stop(struct udevice *dev)
 	return ops->stop(dev);
 }
 
+int pci_ep_prepare_boot(struct udevice* dev){
+    struct pci_ep_ops *ops = pci_ep_get_ops(dev);
+    if (!ops->prepare_boot)
+        return log_msg_ret("prepare_boot", -ENOSYS);
+    return ops->prepare_boot(dev);
+}
+
 int pci_ep_load_from_host(struct udevice* dev){
     struct pci_ep_ops *ops = pci_ep_get_ops(dev);
     if (!ops->load_from_host)
